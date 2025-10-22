@@ -1,0 +1,248 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Départements - Tourisme en Train">
+    <Header />
+
+    <main class="min-h-screen bg-gray-50">
+        <section
+            class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    Sites touristiques et gares par département
+                </h1>
+                <p class="text-xl text-blue-100 max-w-3xl">
+                    Analyse croisée de l&apos;offre touristique et de la
+                    desserte ferroviaire.
+                </p>
+            </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div
+                class="bg-gradient-to-r from-blue-50 to-white rounded-lg shadow-sm p-6 mb-8 border-l-4 border-blue-600"
+            >
+                <p class="text-lg text-gray-800 leading-relaxed">
+                    <strong
+                        >Quels départements combinent richesse touristique et
+                        accessibilité ferroviaire ?</strong
+                    >
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">
+                    Sites touristiques (Top 15)
+                </h2>
+                <div id="chart-sites"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">Gares (Top 15)</h2>
+                <div id="chart-gares"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">Comparaison (Top 15)</h2>
+                <div id="chart-compare"></div>
+            </div>
+
+            <div class="mt-12 bg-blue-50 rounded-lg p-8">
+                <h2 class="text-2xl font-bold mb-4">Conclusion</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Les départements les plus attractifs bénéficient d&apos;une
+                    desserte ferroviaire dense.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <Footer />
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import * as d3 from "d3";
+    import sitesUrl from "../assets/datatourisme-tour.json?url";
+    import garesUrl from "../assets/gares-de-voyageurs.json?url";
+
+    async function init() {
+        try {
+            // Charger les JSON directement
+            const [sitesData, garesData] = await Promise.all([
+                fetch(sitesUrl).then((r) => r.json()),
+                fetch(garesUrl).then((r) => r.json()),
+            ]);
+
+            console.log("Sites:", sitesData.length, "Gares:", garesData.length);
+
+            // Extraire départements sites
+            const deptsSites = sitesData
+                .map((d: any) => {
+                    const commune =
+                        d.Code_postal_et_commune || d["Code_postal_et_commune"];
+                    const match = commune
+                        ? String(commune).match(/^(\d{2})/)
+                        : null;
+                    return match ? match[1] : null;
+                })
+                .filter((d: any) => d);
+
+            // Extraire départements gares
+            const deptsGares = garesData
+                .map((d: any) => {
+                    const code =
+                        d["Code commune"] ||
+                        d["Code_commune"] ||
+                        d.code_commune;
+                    return code ? String(code).substring(0, 2) : null;
+                })
+                .filter((d: any) => d && d.match(/^\d{2}$/));
+
+            console.log(
+                "Depts sites:",
+                deptsSites.length,
+                "Depts gares:",
+                deptsGares.length,
+            );
+
+            const compteSites = d3.rollup(
+                deptsSites,
+                (v: any) => v.length,
+                (d: any) => d,
+            );
+            const compteGares = d3.rollup(
+                deptsGares,
+                (v: any) => v.length,
+                (d: any) => d,
+            );
+
+            const dataSites = Array.from(compteSites, ([dept, count]) => ({
+                departement: dept,
+                sites: count,
+            }))
+                .sort((a, b) => b.sites - a.sites)
+                .slice(0, 15);
+
+            const dataGares = Array.from(compteGares, ([dept, count]) => ({
+                departement: dept,
+                gares: count,
+            }))
+                .sort((a, b) => b.gares - a.gares)
+                .slice(0, 15);
+
+            const allDepts = new Set([
+                ...dataSites.map((d) => d.departement),
+                ...dataGares.map((d) => d.departement),
+            ]);
+            const dataCompare = Array.from(allDepts)
+                .map((dept) => ({
+                    departement: dept,
+                    sites: compteSites.get(dept) || 0,
+                    gares: compteGares.get(dept) || 0,
+                }))
+                .sort((a, b) => b.sites - a.sites)
+                .slice(0, 15);
+
+            const dataGrouped = dataCompare.flatMap((d) => [
+                { departement: d.departement, type: "Sites", value: d.sites },
+                { departement: d.departement, type: "Gares", value: d.gares },
+            ]);
+
+            // Graphique 1: Sites
+            document.getElementById("chart-sites")!.appendChild(
+                Plot.plot({
+                    marginLeft: 80,
+                    marks: [
+                        Plot.gridX({ stroke: "#e0e0e0" }),
+                        Plot.barX(dataSites, {
+                            y: "departement",
+                            x: "sites",
+                            fill: "sites",
+                            sort: { y: "-x" },
+                        }),
+                        Plot.text(dataSites, {
+                            y: "departement",
+                            x: "sites",
+                            text: (d: any) => d.sites,
+                            dx: 8,
+                            fontSize: 11,
+                        }),
+                        Plot.ruleX([0], { strokeWidth: 1.5 }),
+                    ],
+                    color: { scheme: "blues", legend: true },
+                    x: { label: "Sites" },
+                    y: { label: "↑ Département" },
+                    width: 900,
+                    height: 500,
+                }),
+            );
+
+            // Graphique 2: Gares
+            document.getElementById("chart-gares")!.appendChild(
+                Plot.plot({
+                    marginLeft: 80,
+                    marks: [
+                        Plot.gridX({ stroke: "#e0e0e0" }),
+                        Plot.barX(dataGares, {
+                            y: "departement",
+                            x: "gares",
+                            fill: "gares",
+                            sort: { y: "-x" },
+                        }),
+                        Plot.text(dataGares, {
+                            y: "departement",
+                            x: "gares",
+                            text: (d: any) => d.gares,
+                            dx: 8,
+                            fontSize: 11,
+                        }),
+                        Plot.ruleX([0], { strokeWidth: 1.5 }),
+                    ],
+                    color: { scheme: "greens", legend: true },
+                    x: { label: "Gares" },
+                    y: { label: "↑ Département" },
+                    width: 900,
+                    height: 500,
+                }),
+            );
+
+            // Graphique 3: Comparaison
+            document.getElementById("chart-compare")!.appendChild(
+                Plot.plot({
+                    marginLeft: 80,
+                    marks: [
+                        Plot.barX(dataGrouped, {
+                            y: "departement",
+                            x: "value",
+                            fill: "type",
+                            sort: { y: "-x", reduce: "max" },
+                        }),
+                        Plot.ruleX([0], { strokeWidth: 1.5 }),
+                    ],
+                    color: {
+                        domain: ["Sites", "Gares"],
+                        range: ["#3b82f6", "#10b981"],
+                        legend: true,
+                    },
+                    x: { label: "Nombre" },
+                    y: { label: "↑ Département" },
+                    width: 900,
+                    height: 600,
+                }),
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+</script>
