@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Fréquentation - Tourisme en Train">
+    <Header />
+
+    <main class="min-h-screen bg-gray-50">
+        <section
+            class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    Fréquentation des gares par département
+                </h1>
+                <p class="text-xl text-blue-100 max-w-3xl">
+                    Visualisation de l&apos;intensité des flux ferroviaires en
+                    2024.
+                </p>
+            </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div
+                class="bg-gradient-to-r from-blue-50 to-white rounded-lg shadow-sm p-6 mb-8 border-l-4 border-blue-600"
+            >
+                <p class="text-lg text-gray-800 leading-relaxed">
+                    <strong
+                        >Comment la fréquentation ferroviaire se répartit-elle
+                        sur le territoire ?</strong
+                    >
+                    Cette carte choroplèthe révèle les départements qui concentrent
+                    les flux de voyageurs.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">
+                    Carte de fréquentation par département (2024)
+                </h2>
+                <div id="map-container"></div>
+            </div>
+
+            <div class="mt-12 bg-blue-50 rounded-lg p-8">
+                <h2 class="text-2xl font-bold mb-4">Conclusion</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    La carte de fréquentation révèle une <strong
+                        >concentration massive</strong
+                    > en Île-de-France, où Paris et sa région captent plus de 60%
+                    du trafic ferroviaire national.
+                </p>
+                <p class="text-gray-700 leading-relaxed">
+                    Cette distribution met en évidence le rôle central des
+                    grandes agglomérations dans le système ferroviaire.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <Footer />
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import * as d3 from "d3";
+    import departementsUrl from "../assets/departements.geojson?url";
+    import freqUrl from "../assets/frequentation-gares.json?url";
+
+    async function init() {
+        try {
+            const [departements, freqData] = await Promise.all([
+                fetch(departementsUrl).then((r) => r.json()),
+                fetch(freqUrl).then((r) => r.json()),
+            ]);
+
+            console.log("Départements:", departements.features.length);
+            console.log("Gares fréquentation:", freqData.length);
+
+            // Filtrer départements métropole (exclure Corse et DOM-TOM)
+            const departementsMetropole = departements.features.filter(
+                (d: any) => {
+                    const code = d.properties.code;
+                    return (
+                        !["2A", "2B"].includes(code) &&
+                        !code.startsWith("Z") &&
+                        code.match(/^\d{2}$/)
+                    );
+                },
+            );
+
+            // Agréger fréquentation par département
+            const freqParDept = new Map();
+
+            freqData.forEach((gare: any) => {
+                const cp =
+                    gare["Code postal"] ||
+                    gare["Code_postal"] ||
+                    gare.code_postal;
+                if (cp) {
+                    const dept = String(cp).substring(0, 2);
+                    const voyageurs = parseFloat(
+                        gare["Total Voyageurs 2024"] ||
+                            gare["Total_Voyageurs_2024"] ||
+                            0,
+                    );
+
+                    if (!isNaN(voyageurs) && dept.match(/^\d{2}$/)) {
+                        freqParDept.set(
+                            dept,
+                            (freqParDept.get(dept) || 0) + voyageurs,
+                        );
+                    }
+                }
+            });
+
+            console.log("Départements avec fréquentation:", freqParDept.size);
+
+            // Ajouter fréquentation aux features
+            const departementsAvecFreq = departementsMetropole.map(
+                (d: any) => ({
+                    ...d,
+                    properties: {
+                        ...d.properties,
+                        frequentation: freqParDept.get(d.properties.code) || 0,
+                    },
+                }),
+            );
+
+            // Créer la carte choroplèthe
+            const chart = Plot.plot({
+                projection: {
+                    type: "mercator",
+                    domain: {
+                        type: "FeatureCollection",
+                        features: departementsMetropole,
+                    },
+                },
+
+                style: {
+                    background: "white",
+                },
+
+                marks: [
+                    Plot.geo(departementsAvecFreq, {
+                        fill: (d: any) => d.properties.frequentation,
+                        stroke: "white",
+                        strokeWidth: 1.5,
+                        tip: true,
+                        title: (d: any) =>
+                            `${d.properties.nom || d.properties.code}\n${(
+                                d.properties.frequentation / 1000000
+                            ).toFixed(1)}M voyageurs`,
+                    }),
+                ],
+
+                color: {
+                    type: "sqrt",
+                    scheme: "ylorrd",
+                    legend: true,
+                    label: "Fréquentation totale par département →",
+                    tickFormat: (d: any) => `${(d / 1000000).toFixed(0)}M`,
+                },
+
+                width: 1000,
+                height: 800,
+            });
+
+            document.getElementById("map-container")!.appendChild(chart);
+
+            console.log("✅ Carte créée avec succès");
+        } catch (error) {
+            console.error("❌ Erreur:", error);
+            document.getElementById("map-container")!.innerHTML =
+                `<div class="text-red-600 p-4">Erreur: ${error}</div>`;
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+</script>
