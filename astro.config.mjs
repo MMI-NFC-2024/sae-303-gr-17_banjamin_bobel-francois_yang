@@ -8,6 +8,9 @@ import netlify from '@astrojs/netlify';
 // https://astro.build/config
 export default defineConfig({
   vite: {
+    optimizeDeps: {
+      include: ['@observablehq/plot']
+    },
     plugins: [tailwindcss()]
   },
 

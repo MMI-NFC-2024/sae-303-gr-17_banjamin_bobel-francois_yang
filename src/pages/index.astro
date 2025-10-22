@@ -1,21 +1,215 @@
 ---
-import PlotFigure from "../components/PlotFigure.astro";
 import Layout from "../layouts/Layout.astro";
-import * as Plot from "@observablehq/plot";
-import penguins from "../assets/penguins.json";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const pages = [
+  {
+    title: "Cartographie interactive",
+    description:
+      "Visualisation du réseau ferroviaire français et des sites touristiques sur une carte interactive avec clustering.",
+    icon: "🗺️",
+    href: "/carte_ferro-touriste",
+    color: "from-blue-500 to-blue-600",
+  },
+  {
+    title: "Analyse départementale",
+    description:
+      "Distribution des sites touristiques et des gares par département avec graphiques comparatifs.",
+    icon: "📊",
+    href: "/departements",
+    color: "from-green-500 to-green-600",
+  },
+  {
+    title: "Fréquentation des gares",
+    description:
+      "Carte choroplèthe de la fréquentation ferroviaire par département en 2024.",
+    icon: "🚄",
+    href: "/frequentation",
+    color: "from-purple-500 to-purple-600",
+  },
+  {
+    title: "Comparateur de trajets",
+    description:
+      "Comparez les modes de transport entre deux communes : émissions CO₂, coût et temps de trajet avec visualisation cartographique.",
+    icon: "🔄",
+    href: "/carte_interactive",
+    color: "from-orange-500 to-orange-600",
+  },
+];
 ---
 
-<Layout>
-  <h1 class="text-2xl">Test Astro et Plot (Observablehq)</h1>
-  <PlotFigure
-    options={{
-      marks: [
-        Plot.dot(penguins, {
-          x: "culmen_length_mm",
-          y: "culmen_depth_mm",
-          stroke: "species",
-        }),
-      ],
-    }}
-  />
+<Layout title="Tourisme en Train - Accueil">
+<Header />
+
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section
+      class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white overflow-hidden"
+    >
+      <div
+        class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"
+      >
+      </div>
+
+      <div
+        class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32"
+      >
+        <div class="text-center">
+          <div class="inline-block mb-6">
+            <span class="text-6xl md:text-8xl">🚄</span>
+          </div>
+          <h1
+            class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+          >
+            Tourisme en Train en France
+          </h1>
+          <p
+            class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8 leading-relaxed"
+          >
+            Exploration interactive du réseau ferroviaire français et de son
+            potentiel touristique à travers données, cartographie et analyses
+            visuelles.
+          </p>
+          <a
+            href="#analyses"
+            class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl"
+          >
+            Découvrir les analyses →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Introduction -->
+    <section class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            Le train, vecteur du tourisme durable
+          </h2>
+          <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            La France dispose d&apos;un <strong
+              >réseau ferroviaire dense de 3 700 km</strong
+            > accueillant plus de
+            <strong>3,7 millions de visiteurs</strong> chaque année. Ce projet explore
+            comment le train structure l&apos;accessibilité touristique du territoire.
+          </p>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            À travers trois axes d&apos;analyse — cartographie, répartition
+            territoriale et fréquentation — nous révélons les dynamiques du
+            tourisme ferroviaire français et les enjeux de développement durable
+            des mobilités.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analyses -->
+    <section id="analyses" class="py-20 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Quatre axes d&apos;analyse
+          </h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Explorez les données du tourisme ferroviaire à travers des
+            visualisations interactives et des analyses approfondies.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {
+            pages.map((page) => (
+              <div class="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2">
+                <div
+                  class={`h-40 bg-gradient-to-br ${page.color} flex items-center justify-center`}
+                >
+                  <span class="text-7xl group-hover:scale-110 transition-transform duration-300">
+                    {page.icon}
+                  </span>
+                </div>
+
+                <div class="p-6">
+                  <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    {page.title}
+                  </h3>
+                  <p class="text-gray-600 mb-6 leading-relaxed">
+                    {page.description}
+                  </p>
+                  <a
+                    href={page.href}
+                    class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                  >
+                    Explorer →
+                    <svg
+                      class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Chiffres clés -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+          Quelques chiffres
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="text-5xl font-bold text-blue-600 mb-2">3 700</div>
+            <div class="text-gray-600 font-medium">Kilomètres de réseau</div>
+          </div>
+          <div class="text-center">
+            <div class="text-5xl font-bold text-green-600 mb-2">25 000+</div>
+            <div class="text-gray-600 font-medium">Sites touristiques</div>
+          </div>
+          <div class="text-center">
+            <div class="text-5xl font-bold text-purple-600 mb-2">2 800+</div>
+            <div class="text-gray-600 font-medium">Gares en France</div>
+          </div>
+          <div class="text-center">
+            <div class="text-5xl font-bold text-orange-600 mb-2">3.7M</div>
+            <div class="text-gray-600 font-medium">Visiteurs annuels</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-blue-800">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+          Prêt à explorer les données ?
+        </h2>
+        <p class="text-xl text-blue-100 mb-8">
+          Découvrez comment le train façonne le tourisme français à travers nos
+          visualisations interactives.
+        </p>
+        <a
+          href="/carte_ferro-touriste"
+          class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl"
+        >
+          Commencer l&apos;exploration 🚀
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
 </Layout>

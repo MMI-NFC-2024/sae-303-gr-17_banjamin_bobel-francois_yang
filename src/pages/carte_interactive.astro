@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import communesUrl from '../assets/basilic-dataculture-2025-09-05.json?url';
+import garesUrl from '../assets/gares-de-voyageurs.json?url';
+import comparateurUrl from '../scripts/comparateur.js?url';
+---
+
+<Layout title="Comparateur de Trajets">
+  <Header/>
+  <main class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <section class="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Visualisation d'un trajet sur une carte interactive
+      </h1>
+      <p class="text-gray-700 mb-6">
+        Comparez les modes de transport entre deux communes françaises : émissions de CO₂, coût et temps de trajet.
+      </p>
+
+      <!-- Formulaire -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="communeDepart" class="block text-sm font-medium text-gray-700 mb-2">
+              Commune de départ
+            </label>
+            <input 
+              type="text" 
+              id="communeDepart" 
+              placeholder="Ex : Lille, Paris..." 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          
+          <div>
+            <label for="communeDest" class="block text-sm font-medium text-gray-700 mb-2">
+              Commune de destination
+            </label>
+            <input 
+              type="text" 
+              id="communeDest" 
+              placeholder="Ex : Marseille, Lyon..." 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          
+          <div>
+            <label for="modeTransport" class="block text-sm font-medium text-gray-700 mb-2">
+              Mode de transport
+            </label>
+            <select 
+              id="modeTransport" 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Train">Train</option>
+              <option value="Voiture thermique">Voiture thermique</option>
+              <option value="Voiture électrique">Voiture électrique</option>
+              <option value="Avion">Avion</option>
+              <option value="Autocar">Autocar</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte -->
+  <div id="map" class="bg-white rounded-lg shadow mb-6 h-[600px]" data-communes-url={communesUrl} data-gares-url={garesUrl} data-comparateur-url={comparateurUrl}></div>
+
+      <!-- Graphiques -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="text-lg font-semibold mb-3 text-center">Émissions de CO₂</h3>
+          <div id="chart-co2"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="text-lg font-semibold mb-3 text-center">Coût du trajet</h3>
+          <div id="chart-prix"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="text-lg font-semibold mb-3 text-center">Temps de trajet</h3>
+          <div id="chart-temps"></div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div id="info" class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800"></div>
+    </section>
+  </main>
+  <Footer/>
+</Layout>
+
+<!-- CSS Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script type="module">
+  (async () => {
+    const mapDiv = document.getElementById('map');
+    const communes = mapDiv?.dataset?.communesUrl;
+    const gares = mapDiv?.dataset?.garesUrl;
+    if (!communes || !gares) {
+      console.error('Data URLs missing for communes/gares', { communes, gares });
+      return;
+    }
+
+    try {
+      const comparateurModuleUrl = mapDiv?.dataset?.comparateurUrl;
+      if (!comparateurModuleUrl) throw new Error('comparateurUrl not found on #map dataset');
+      const module = await import(comparateurModuleUrl);
+      const ComparateurTrajet = module.ComparateurTrajet || module.default;
+      const comparateur = new ComparateurTrajet(communes, gares);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => comparateur.init());
+      } else {
+        comparateur.init();
+      }
+    } catch (err) {
+      console.error('Failed to load comparateur module', err);
+    }
+  })();
+</script>
