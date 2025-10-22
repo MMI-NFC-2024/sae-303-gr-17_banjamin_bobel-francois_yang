@@ -1,260 +1,192 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import departementsUrl from '../assets/departements.geojson?url';
-import garesUrl from '../assets/gares-de-voyageurs.geojson?url';
-import sitesUrl from '../assets/datatourisme-tour.json?url';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import departementsUrl from "../assets/departements.geojson?url";
+import garesUrl from "../assets/gares-de-voyageurs.geojson?url";
+import sitesUrl from "../assets/datatourisme-tour.json?url";
 ---
 
-<Layout title="Carte Ferro-Tourisme">
-  <main class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-    <section class="py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
-        Cartographie du réseau ferroviaire et des sites touristiques
-      </h1>
-      <p class="text-gray-700 mb-4">
-        La France dispose d'un réseau ferroviaire dense qui relie de nombreuses gares à des sites touristiques majeurs. 
-        Visualiser cette couverture permet de comprendre l'accessibilité des destinations et d'identifier les zones bien desservies ou à renforcer.
-      </p>
+<Layout title="Cartographie - Tourisme en Train">
+  <Header />
 
-      <div class="mb-4 flex gap-4 flex-wrap">
-        <div>
-          <label for="affichage" class="mr-2 font-medium">Afficher :</label>
-          <select id="affichage" class="px-3 py-2 border rounded">
+  <main class="min-h-screen bg-gray-50">
+    <section
+      class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+          Cartographie du réseau ferroviaire
+        </h1>
+        <p class="text-xl text-blue-100 max-w-3xl">
+          La France dispose d&apos;un réseau ferroviaire dense qui relie de
+          nombreuses gares.
+        </p>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex gap-4 items-center">
+          <label for="affichage" class="text-sm font-medium">Afficher :</label>
+          <select id="affichage" class="px-4 py-2 border rounded-lg">
             <option value="les-deux">Les deux</option>
             <option value="gares">Gares uniquement</option>
-            <option value="sites">Sites touristiques uniquement</option>
+            <option value="sites">Sites uniquement</option>
           </select>
+          <div id="stats" class="text-sm text-gray-600"></div>
         </div>
-        <div class="text-sm text-gray-600 self-center" id="stats"></div>
       </div>
 
-  <div id="map" class="bg-white rounded shadow h-[700px] overflow-hidden"></div>
-      
-      <div id="diag" class="mt-4 p-3 text-sm text-gray-700 bg-gray-50 rounded border border-gray-100">
-        <strong>Diagnostics :</strong>
-        <pre id="diag-log" class="whitespace-pre-wrap text-xs mt-2"></pre>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div id="map" class="h-[700px]"></div>
+      </div>
+
+      <div class="mt-12 bg-blue-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-4">Conclusion</h2>
+        <p class="text-gray-700">
+          Cette cartographie révèle une couverture dense du territoire français.
+        </p>
       </div>
     </section>
   </main>
+
+  <Footer />
 </Layout>
 
-<!-- CSS Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+/>
 
 <script define:vars={{ departementsUrl, garesUrl, sitesUrl }}>
-  function log(msg) {
-    console.log(msg);
-    const pre = document.getElementById('diag-log');
-    if (pre) pre.textContent += msg + '\n';
-  }
-
   async function initMap() {
     try {
-      log('=== DÉBUT DU CHARGEMENT ===');
-      
-      const mapDiv = document.getElementById('map');
-      if (!mapDiv) throw new Error('Container #map introuvable');
-      
-      mapDiv.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-600">⏳ Chargement de Leaflet et des données…</p></div>';
+      const mapDiv = document.getElementById("map");
+      mapDiv.innerHTML =
+        '<div class="flex items-center justify-center h-full"><p>⏳ Chargement...</p></div>';
 
-      log('URLs:');
-      log(`- Départements: ${departementsUrl}`);
-      log(`- Gares: ${garesUrl}`);
-      log(`- Sites: ${sitesUrl}`);
+      await loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
+      await loadScript(
+        "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js",
+      );
 
-      // Charger Leaflet et le plugin de clustering
-      log('Chargement de Leaflet...');
-      await loadScript('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
-      await loadScript('https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js');
-      log('✓ Leaflet chargé');
-
-      // Charger les données
-      log('Chargement des données...');
       const [departementsRes, garesRes, sitesRes] = await Promise.all([
-        fetch(departementsUrl).then(r => {
-          if (!r.ok) throw new Error(`Départements: ${r.status}`);
-          return r.json();
-        }),
-        fetch(garesUrl).then(r => {
-          if (!r.ok) throw new Error(`Gares: ${r.status}`);
-          return r.json();
-        }),
-        fetch(sitesUrl).then(r => {
-          if (!r.ok) throw new Error(`Sites: ${r.status}`);
-          return r.json();
-        }),
+        fetch(departementsUrl).then((r) => r.json()),
+        fetch(garesUrl).then((r) => r.json()),
+        fetch(sitesUrl).then((r) => r.json()), // JSON, PAS text() !
       ]);
 
-      log(`✓ Données chargées:`);
-      log(`  - Départements: ${departementsRes.features?.length || 0} features`);
-      log(`  - Gares: ${garesRes.features?.length || 0} features`);
-      log(`  - Sites: ${Array.isArray(sitesRes) ? sitesRes.length : 0} éléments`);
+      console.log("Sites chargés:", sitesRes.length);
 
-      // Initialiser la carte
-      mapDiv.innerHTML = '';
-      const map = L.map('map').setView([46.8, 2.5], 6); // Centre France
+      mapDiv.innerHTML = "";
+      const map = L.map("map").setView([46.8, 2.5], 6);
 
-      // Ajouter les tuiles OpenStreetMap
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap",
+        maxZoom: 18,
       }).addTo(map);
 
-      // Ajouter les contours des départements
       L.geoJSON(departementsRes, {
-        style: {
-          color: '#888',
-          weight: 1,
-          fillColor: 'transparent',
-          fillOpacity: 0
-        }
+        style: { color: "#888", weight: 1, fillOpacity: 0 },
       }).addTo(map);
 
-      // Créer les groupes de markers
       const garesLayer = L.layerGroup();
-      const sitesClusterGroup = L.markerClusterGroup({
-        maxClusterRadius: 50,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-      });
+      const sitesCluster = L.markerClusterGroup({ maxClusterRadius: 50 });
 
-      // Ajouter les gares (cercles bleus)
       let garesCount = 0;
-      garesRes.features.forEach(feature => {
-        if (feature.geometry?.coordinates?.length >= 2) {
-          const [lon, lat] = feature.geometry.coordinates;
+      garesRes.features.forEach((f) => {
+        if (f.geometry?.coordinates?.length >= 2) {
+          const [lon, lat] = f.geometry.coordinates;
           if (!isNaN(lon) && !isNaN(lat)) {
-            const marker = L.circleMarker([lat, lon], {
+            const m = L.circleMarker([lat, lon], {
               radius: 5,
-              fillColor: '#3b82f6',
-              color: 'white',
+              fillColor: "#3b82f6",
+              color: "white",
               weight: 1.5,
-              fillOpacity: 0.9
+              fillOpacity: 0.9,
             });
-            
-            const nom = feature.properties?.nom || feature.properties?.libelle || 'Gare';
-            marker.bindPopup(`<strong>🚉 ${nom}</strong>`);
-            marker.addTo(garesLayer);
+            m.bindPopup(`<strong>🚉 ${f.properties?.nom || "Gare"}</strong>`);
+            m.addTo(garesLayer);
             garesCount++;
           }
         }
       });
-      log(`✓ ${garesCount} gares ajoutées`);
 
-      // Ajouter les sites touristiques (cercles rouges avec clustering)
       let sitesCount = 0;
-      sitesRes.forEach(site => {
-        const lon = parseFloat(site.Longitude || site.longitude);
-        const lat = parseFloat(site.Latitude || site.latitude);
-        
+      sitesRes.forEach((s) => {
+        const lon = parseFloat(s.Longitude || s.longitude);
+        const lat = parseFloat(s.Latitude || s.latitude);
+
         if (!isNaN(lon) && !isNaN(lat) && lon !== 0 && lat !== 0) {
-          const marker = L.circleMarker([lat, lon], {
+          const m = L.circleMarker([lat, lon], {
             radius: 4,
-            fillColor: '#ef4444',
-            color: 'white',
+            fillColor: "#ef4444",
+            color: "white",
             weight: 1,
-            fillOpacity: 0.8
+            fillOpacity: 0.8,
           });
-          
-          const nom = site.Nom_du_POI || site.nom || 'Site touristique';
-          const type = site.Categories_de_POI || site.type || '';
-          const commune = site.Code_postal_et_commune || site.commune || '';
-          
-          let popupContent = `<strong>📍 ${nom}</strong>`;
-          if (type) popupContent += `<br>🏛️ ${type}`;
-          if (commune) popupContent += `<br>📮 ${commune}`;
-          
-          marker.bindPopup(popupContent);
-          sitesClusterGroup.addLayer(marker);
+          m.bindPopup(`<strong>📍 ${s.Nom_du_POI || s.nom || "Site"}</strong>`);
+          sitesCluster.addLayer(m);
           sitesCount++;
         }
       });
-      log(`✓ ${sitesCount} sites touristiques ajoutés (avec clustering)`);
 
-      // Ajouter les layers à la carte par défaut
       garesLayer.addTo(map);
-      sitesClusterGroup.addTo(map);
+      sitesCluster.addTo(map);
 
-      // Mettre à jour les stats
       updateStats(garesCount, sitesCount);
 
-      // Gérer le changement d'affichage
-      const selectAffichage = document.getElementById('affichage');
-      selectAffichage.addEventListener('change', (e) => {
-        const value = e.target.value;
-        log(`Changement affichage: ${value}`);
-        
-        if (value === 'les-deux') {
+      document.getElementById("affichage").addEventListener("change", (e) => {
+        if (e.target.value === "les-deux") {
           map.addLayer(garesLayer);
-          map.addLayer(sitesClusterGroup);
+          map.addLayer(sitesCluster);
           updateStats(garesCount, sitesCount);
-        } else if (value === 'gares') {
+        } else if (e.target.value === "gares") {
           map.addLayer(garesLayer);
-          map.removeLayer(sitesClusterGroup);
+          map.removeLayer(sitesCluster);
           updateStats(garesCount, 0);
-        } else if (value === 'sites') {
+        } else {
           map.removeLayer(garesLayer);
-          map.addLayer(sitesClusterGroup);
+          map.addLayer(sitesCluster);
           updateStats(0, sitesCount);
         }
       });
-
-      log('=== TERMINÉ ===');
-      log('💡 Zoom sur la carte pour voir les détails. Les sites sont groupés automatiquement.');
-
     } catch (err) {
-      console.error('Erreur:', err);
-      log(`❌ ERREUR: ${err.message}`);
-      
-      const mapDiv = document.getElementById('map');
-      if (mapDiv) {
-        mapDiv.innerHTML = `
-          <div class="p-4 text-red-700 bg-red-50 rounded h-full flex items-center justify-center">
-            <div>
-              <strong>❌ Erreur de chargement</strong>
-              <p class="mt-2 text-sm">${err.message}</p>
-              <p class="mt-2 text-xs text-gray-600">Consultez la console (F12).</p>
-            </div>
-          </div>
-        `;
-      }
+      console.error(err);
+      document.getElementById("map").innerHTML =
+        `<div class="p-4 text-red-700">❌ ${err.message}</div>`;
     }
   }
 
-  // Fonction utilitaire pour charger un script
   function loadScript(src) {
     return new Promise((resolve, reject) => {
-      // Vérifier si déjà chargé
-      if (document.querySelector(`script[src="${src}"]`)) {
-        resolve();
-        return;
-      }
-      
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
     });
   }
 
-  // Mettre à jour les statistiques affichées
-  function updateStats(gares, sites) {
-    const statsDiv = document.getElementById('stats');
-    if (statsDiv) {
-      const parts = [];
-      if (gares > 0) parts.push(`🚉 ${gares} gares`);
-      if (sites > 0) parts.push(`📍 ${sites} sites`);
-      statsDiv.textContent = parts.join(' • ');
-    }
+  function updateStats(g, s) {
+    const p = [];
+    if (g > 0) p.push(`🚉 ${g} gares`);
+    if (s > 0) p.push(`📍 ${s} sites`);
+    document.getElementById("stats").textContent = p.join(" • ");
   }
 
-  // Lancer au chargement
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMap);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMap);
   } else {
     initMap();
   }
