@@ -1,65 +1,77 @@
 <footer style="background: #111827; color: #9ca3af; margin-top: auto;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 3rem 2rem;">
         <div
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;"
         >
+            <!-- À propos -->
             <div>
                 <h3
-                    style="color: white; font-weight: bold; margin-bottom: 1rem;"
+                    style="color: white; font-weight: bold; margin-bottom: 1rem; font-size: 1.125rem;"
                 >
                     À propos
                 </h3>
-                <p style="font-size: 0.875rem;">
-                    Projet d'analyse du tourisme ferroviaire en France.
+                <p style="font-size: 0.875rem; line-height: 1.5;">
+                    Projet d&apos;analyse du tourisme ferroviaire en France avec
+                    visualisations de données.
                 </p>
             </div>
 
+            <!-- Navigation -->
             <div>
                 <h3
-                    style="color: white; font-weight: bold; margin-bottom: 1rem;"
+                    style="color: white; font-weight: bold; margin-bottom: 1rem; font-size: 1.125rem;"
                 >
                     Navigation
                 </h3>
                 <div
                     style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem;"
                 >
-                    <a href="/" style="color: #9ca3af; text-decoration: none;"
-                        >Accueil</a
+                    <a
+                        href="/"
+                        style="color: #9ca3af; text-decoration: none; transition: color 0.2s;"
+                        onmouseover="this.style.color='white'"
+                        onmouseout="this.style.color='#9ca3af'">Accueil</a
                     >
                     <a
                         href="/cartographie"
-                        style="color: #9ca3af; text-decoration: none;"
-                        >Cartographie</a
+                        style="color: #9ca3af; text-decoration: none; transition: color 0.2s;"
+                        onmouseover="this.style.color='white'"
+                        onmouseout="this.style.color='#9ca3af'">Cartographie</a
                     >
                     <a
                         href="/departements"
-                        style="color: #9ca3af; text-decoration: none;"
-                        >Départements</a
+                        style="color: #9ca3af; text-decoration: none; transition: color 0.2s;"
+                        onmouseover="this.style.color='white'"
+                        onmouseout="this.style.color='#9ca3af'">Départements</a
                     >
                     <a
                         href="/frequentation"
-                        style="color: #9ca3af; text-decoration: none;"
-                        >Fréquentation</a
+                        style="color: #9ca3af; text-decoration: none; transition: color 0.2s;"
+                        onmouseover="this.style.color='white'"
+                        onmouseout="this.style.color='#9ca3af'">Fréquentation</a
                     >
                 </div>
             </div>
 
+            <!-- Sources -->
             <div>
                 <h3
-                    style="color: white; font-weight: bold; margin-bottom: 1rem;"
+                    style="color: white; font-weight: bold; margin-bottom: 1rem; font-size: 1.125rem;"
                 >
                     Sources
                 </h3>
-                <p style="font-size: 0.875rem;">
-                    📊 Data.gouv.fr<br />🚉 SNCF Open Data<br />🗺️ IGN
-                </p>
+                <div style="font-size: 0.875rem; line-height: 1.8;">
+                    <p>📊 Data.gouv.fr</p>
+                    <p>🚉 SNCF Open Data</p>
+                    <p>🗺️ IGN</p>
+                </div>
             </div>
         </div>
 
         <div
             style="border-top: 1px solid #374151; margin-top: 2rem; padding-top: 2rem; text-align: center; font-size: 0.875rem;"
         >
-            <p>&copy; 2025 Tourisme en Train</p>
+            <p>&copy; 2025 Tourisme en Train - SAE 303</p>
         </div>
     </div>
 </footer>
