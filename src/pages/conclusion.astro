@@ -1,0 +1,242 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Conclusion - Tourisme en Train">
+    <Header />
+
+    <main class="min-h-screen bg-gray-50">
+        <!-- Hero -->
+        <section
+            style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 5rem 2rem; text-align: center;"
+        >
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h1
+                    style="font-size: 3rem; font-weight: bold; margin-bottom: 1.5rem;"
+                >
+                    Conclusion du projet
+                </h1>
+                <p
+                    style="font-size: 1.5rem; opacity: 0.9; max-width: 800px; margin: 0 auto;"
+                >
+                    Synthèse et perspectives du tourisme ferroviaire en France
+                </p>
+            </div>
+        </section>
+
+        <!-- Statistiques clés -->
+        <section
+            style="max-width: 1200px; margin: -3rem auto 0; padding: 0 2rem; position: relative; z-index: 10;"
+        >
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;"
+            >
+                <div
+                    style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;"
+                >
+                    <div
+                        style="font-size: 3.5rem; font-weight: bold; color: #3b82f6; margin-bottom: 0.5rem;"
+                    >
+                        25 000+
+                    </div>
+                    <div style="color: #6b7280; font-weight: 500;">
+                        Sites touristiques recensés
+                    </div>
+                </div>
+
+                <div
+                    style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;"
+                >
+                    <div
+                        style="font-size: 3.5rem; font-weight: bold; color: #10b981; margin-bottom: 0.5rem;"
+                    >
+                        2 800+
+                    </div>
+                    <div style="color: #6b7280; font-weight: 500;">
+                        Gares ferroviaires
+                    </div>
+                </div>
+
+                <div
+                    style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;"
+                >
+                    <div
+                        style="font-size: 3.5rem; font-weight: bold; color: #f59e0b; margin-bottom: 0.5rem;"
+                    >
+                        96
+                    </div>
+                    <div style="color: #6b7280; font-weight: 500;">
+                        Départements analysés
+                    </div>
+                </div>
+
+                <div
+                    style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;"
+                >
+                    <div
+                        style="font-size: 3.5rem; font-weight: bold; color: #8b5cf6; margin-bottom: 0.5rem;"
+                    >
+                        3.7M
+                    </div>
+                    <div style="color: #6b7280; font-weight: 500;">
+                        Visiteurs annuels
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Synthèse -->
+        <section style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+            <div
+                style="background: white; border-radius: 1rem; padding: 3rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"
+            >
+                <h2
+                    style="font-size: 2rem; font-weight: bold; margin-bottom: 2rem; color: #111827;"
+                >
+                    Synthèse des analyses
+                </h2>
+
+                <div style="display: grid; gap: 2rem;">
+                    <!-- Point 1 -->
+                    <div
+                        style="display: flex; gap: 1.5rem; padding: 1.5rem; background: linear-gradient(to right, #eff6ff, white); border-left: 4px solid #3b82f6; border-radius: 0.5rem;"
+                    >
+                        <div style="font-size: 2rem;">🗺️</div>
+                        <div>
+                            <h3
+                                style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; color: #1e40af;"
+                            >
+                                Cartographie interactive
+                            </h3>
+                            <p style="color: #4b5563; line-height: 1.7;">
+                                La visualisation cartographique révèle une
+                                couverture dense du territoire avec plus de 2
+                                800 gares et 25 000 sites touristiques. Le
+                                clustering facilite l'identification des zones à
+                                forte densité touristique.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 2 -->
+                    <div
+                        style="display: flex; gap: 1.5rem; padding: 1.5rem; background: linear-gradient(to right, #f0fdf4, white); border-left: 4px solid #10b981; border-radius: 0.5rem;"
+                    >
+                        <div style="font-size: 2rem;">📊</div>
+                        <div>
+                            <h3
+                                style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; color: #047857;"
+                            >
+                                Répartition territoriale
+                            </h3>
+                            <p style="color: #4b5563; line-height: 1.7;">
+                                L'analyse départementale montre une forte
+                                concentration en Île-de-France (département 67
+                                avec 1 100+ sites), suivie des zones
+                                touristiques majeures (Alpes, Côte d'Azur). La
+                                corrélation sites/gares confirme l'importance de
+                                la desserte ferroviaire.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 3 -->
+                    <div
+                        style="display: flex; gap: 1.5rem; padding: 1.5rem; background: linear-gradient(to right, #fef3c7, white); border-left: 4px solid #f59e0b; border-radius: 0.5rem;"
+                    >
+                        <div style="font-size: 2rem;">🚄</div>
+                        <div>
+                            <h3
+                                style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; color: #d97706;"
+                            >
+                                Flux de fréquentation
+                            </h3>
+                            <p style="color: #4b5563; line-height: 1.7;">
+                                La carte de fréquentation met en évidence la
+                                centralité parisienne avec plus de 60% du trafic
+                                national. Les axes Lyon, Marseille et Lille
+                                constituent des pôles secondaires majeurs,
+                                structurant les flux touristiques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Perspectives -->
+        <section
+            style="background: linear-gradient(to bottom, #f9fafb, white); padding: 4rem 2rem;"
+        >
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h2
+                    style="font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 3rem; color: #111827;"
+                >
+                    Perspectives et enjeux
+                </h2>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;"
+                >
+                    <div
+                        style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"
+                    >
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            🌱
+                        </div>
+                        <h3
+                            style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #047857;"
+                        >
+                            Tourisme durable
+                        </h3>
+                        <p style="color: #6b7280; line-height: 1.6;">
+                            Le train s'impose comme le mode de transport
+                            privilégié pour un tourisme bas-carbone, avec 80%
+                            d'émissions en moins que la voiture.
+                        </p>
+                    </div>
+
+                    <div
+                        style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"
+                    >
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            📍
+                        </div>
+                        <h3
+                            style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #1e40af;"
+                        >
+                            Équité territoriale
+                        </h3>
+                        <p style="color: #6b7280; line-height: 1.6;">
+                            Renforcer les liaisons ferroviaires vers les
+                            destinations émergentes pour équilibrer l'offre
+                            touristique sur l'ensemble du territoire.
+                        </p>
+                    </div>
+
+                    <div
+                        style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"
+                    >
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            💡
+                        </div>
+                        <h3
+                            style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; color: #7c3aed;"
+                        >
+                            Innovation data
+                        </h3>
+                        <p style="color: #6b7280; line-height: 1.6;">
+                            L'exploitation des données ouvertes permet de mieux
+                            comprendre et optimiser l'accessibilité touristique
+                            ferroviaire.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <Footer />
+</Layout>
