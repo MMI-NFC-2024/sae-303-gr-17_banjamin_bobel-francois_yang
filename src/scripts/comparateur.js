@@ -153,7 +153,7 @@ export class ComparateurTrajet {
     if (co2Container) {
       const width = computeWidth(co2Container);
       safePlot(co2Container, {
-        width, height: 300, marginLeft: 60, marginBottom: 70, marginRight: 20,
+        width, height: 320, marginLeft: 60, marginBottom: 100, marginRight: 20,
         marks: [Plot.barY(cc, { x: 'mode', y: 'co2', fill: 'mode', tip: true }), Plot.ruleY([0])],
         color: { domain: modeOrder, range: ['#9b59b6','#e74c3c','#3498db','#f39c12','#2ecc71'], legend: true },
         x: { tickRotate: -45, label: 'Mode de transport' }, y: { grid: true, label: 'Émissions CO₂ (kg)' },
@@ -166,7 +166,7 @@ export class ComparateurTrajet {
     if (prixContainer) {
       const width = computeWidth(prixContainer);
       safePlot(prixContainer, {
-        width, height: 300, marginLeft: 60, marginBottom: 70, marginRight: 20,
+        width, height: 320, marginLeft: 60, marginBottom: 100, marginRight: 20,
         marks: [Plot.barY(cp, { x: 'mode', y: 'prix', fill: 'mode', tip: true }), Plot.ruleY([0])],
         color: { domain: modeOrder, range: ['#9b59b6','#e74c3c','#3498db','#f39c12','#2ecc71'], legend: true },
         x: { tickRotate: -45, label: 'Mode de transport' }, y: { grid: true, label: 'Prix (€)' },
@@ -179,7 +179,7 @@ export class ComparateurTrajet {
     if (tempsContainer) {
       const width = computeWidth(tempsContainer);
       safePlot(tempsContainer, {
-        width, height: 300, marginLeft: 60, marginBottom: 70, marginRight: 20,
+        width, height: 320, marginLeft: 60, marginBottom: 100, marginRight: 20,
         marks: [Plot.barY(cc, { x: 'mode', y: 'temps', fill: 'mode', tip: true }), Plot.ruleY([0])],
         color: { domain: modeOrder, range: ['#9b59b6','#e74c3c','#3498db','#f39c12','#2ecc71'], legend: true },
         x: { tickRotate: -45, label: 'Mode de transport' }, y: { grid: true, label: 'Durée (heures)' },
